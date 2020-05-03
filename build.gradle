@@ -10,7 +10,6 @@ ext {
   	log4j2: '2.13.2',
   	log4j2Jcl: '2.13.2',
   	nettyAll: '4.1.49.Final',
-  	sigar: '1.6.4'
   ]
 }
 
@@ -42,7 +41,6 @@ allprojects {
 		implementation "io.netty:netty-all:${versions.nettyAll}"
 		testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
 		testImplementation "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
-		testImplementation "org.hyperic:sigar:${versions.sigar}"
 	}
 	
 	test {
