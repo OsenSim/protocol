@@ -22,6 +22,9 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 /**
  * @author Arpan Mukhopadhyay
@@ -53,6 +56,8 @@ public class HttpListener extends ProtocoListener {
 		EventLoopGroup woker = new NioEventLoopGroup(5);
 		bootstrap = new ServerBootstrap();
 		bootstrap.group(boos, woker);
+		bootstrap.channel(NioServerSocketChannel.class);
+		bootstrap.handler(new LoggingHandler(LogLevel.INFO));
 	}
 	
 	/**
@@ -82,14 +87,19 @@ public class HttpListener extends ProtocoListener {
 	
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
-		
+		try {
+			chf = bootstrap.bind(getPort()).sync();
+			if (logger.isInfoEnabled()) logger.info(getName() + " started on " + getAddr() + ":" + getPort());
+			chf = chf.channel().closeFuture();
+		} catch (Throwable e) {
+			if (logger.isInfoEnabled()) logger.info("Unable to start " + getName() + ". Error: ", e);
+		}
 	}
 	
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+		bootstrap.config().childGroup().shutdownGracefully();
+		bootstrap.config().group().shutdownGracefully();
 	}
 	
 	@Override
